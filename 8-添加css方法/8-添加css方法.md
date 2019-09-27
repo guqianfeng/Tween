@@ -1,23 +1,58 @@
-# 封装运动框架-基础版
+# 添加css方法
 
-> 封装前应该考虑什么
-1. 封装一个函数，调用用来实现我们的动画
-2. 考虑需要哪些参数
+> 优化
+* 还是之前的案例，我们来看之前的这段代码
+    ```
+        function myTween(el, attr, target, duration, fx) {
+            let t = 0;
+            let b = parseFloat(getComputedStyle(el)[attr]);
+            let c = target - b;
+            let d = Math.ceil(duration / (1000 / 60));
+            // console.log(t, b, c, d);
+            let timer = 0;
+            anim();
+            function anim() {
+                t++;
+                if (t > d) {
+                    //动画结束
+                    cancelAnimationFrame(timer);
+                } else {
+                    let val = Tween[fx](t, b, c, d);
+                    el.style[attr] = val + "px";
+                    timer = requestAnimationFrame(anim);
+                }
+            }
+        }
+    ```
+* 我们发现在给元素设置样式的时候我们加了px
+* 如果是些没有单位的样式，比如opacity这样的肯定就有问题了 
+* 所以我们要处理下，添加css方法
+* 还是老样子考虑下css方法需要的参数，我们css方法的目的是能获取或者设置元素属性的值
     1. el - 元素
-        * 肯定需要元素，我们要给什么元素做动画
+        * 就是我们想要的元素
     2. attr - 属性
-        * 接下去就是要给这个元素的哪个属性做动画，先做个简单的，
-            比如现在我们可以先不考虑多个属性做动画
-    3. target - 目标值
-        * 该属性最终要达到的结果
-    4. duration - 时长
-        * 之前我们用的是动画总共的次数，其实一般是传毫秒数的
-        * 比如2000，指的就是动画时长2000毫秒，到达目标点
-    5. fx - 动画形式
-        * Tween里面不一样的运动公式    
-       
-> 练习
-* 一步一步来，先来调试下下面的代码
+        * 哪个属性
+        * 根据属性判断是不是要加px
+    3. val - 值
+        * 传值了那就是设置，不传那就是获取
+
+> 练习   
+* 先来封装这个css方法
+    ```
+        function css(el, attr, val) {
+            if (val === undefined) {
+                return parseFloat(getComputedStyle(el)[attr]);
+            } else {
+                if (attr === "opacity") {
+                    el.style[attr] = val;
+                    el.style.filter = `alpha(opacity=${val * 100})`;//兼容
+                } else {
+                    el.style[attr] = val + "px";
+                }
+            }
+        }
+    ```
+* 封装好当然要使用啊，完整的代码如下
     ```
     <!DOCTYPE html>
     <html lang="en">
@@ -32,6 +67,7 @@
                 width: 100px;
                 height: 100px;
                 background-color: red;
+                opacity: 1;
             }
         </style>
     </head>
@@ -181,57 +217,28 @@
             }
         })();
     
-        function myTween(el, attr, target, duration, fx) {
-            let t = 0;
-            let b = parseFloat(getComputedStyle(el)[attr]);
-            let c = target - b;
-            let d = duration / (1000 / 60);
-            console.log(t, b, c, d);
+        function css(el, attr, val) {
+            if (val === undefined) {
+                return parseFloat(getComputedStyle(el)[attr]);
+            } else {
+                if (attr === "opacity") {
+                    el.style[attr] = val;
+                    el.style.filter = `alpha(opacity=${val * 100})`;//兼容
+                } else {
+                    el.style[attr] = val + "px";
+                }
+            }
         }
     
-        (function () {
-            let aBtn = document.querySelectorAll("button");
-            let oBox = document.querySelector("#box");
-            aBtn[0].onclick = function () {
-                myTween(oBox, "top", 200, 3000, "linear");
-            }
-        })()
-    </script>
-    </body>
-    </html>
-    ``` 
-
-* 几个参数的逻辑我们在来整理下
-    1. t首先默认是0，这个应该没什么问题
-    2. b作为初始值，所以我们这边通过getComputedStyle去获取，注意这里拿到的是字符串，
-        所以前面用parseFloat转成数值
-    3. c其实也没什么问题，就是用目标值-初始值
-    4. 主要是d这里的逻辑，因为我们这边传入的是毫秒数，比如3000毫秒应该执行几次动画，
-        我们以浏览器的刷新频率来说，1s中60帧，所以除以1000后在乘以60(和除以(1000 / 60)等价)，
-        拿这里的3000举例子，所以就是要执行180次动画
-
-* 我们这里的例子用的是box向下匀速移动到200的距离，用3s的时间
-    1. 所以方法调用是这么写的`myTween(oBox, "top", 200, 3000, "linear");` 
-    2. 注意看我们一开始的样式，box就给了top值，初始值是100
-    3. 我们目标是200，初始值是100，所以change的值就是200-100=100
-    4. d的逻辑在上面已经分析过了，这里就不赘述了
-    5. 所以控制台最终打印的结果是
-    
-        ![](images/第一个控制台打印的信息.jpg)   
-        
-    6. 这里的d其实还可以做个优化处理，因为可能会出现小数，总共执行次数不可能为小数，
-        所以可以向上取整，代码就是`let d = Math.ceil(duration / (1000 / 60));`     
-        
-* 接下去就是写我们熟悉的requestAnimationFrame
-    ```
         function myTween(el, attr, target, duration, fx) {
             let t = 0;
-            let b = parseFloat(getComputedStyle(el)[attr]);
+            let b = css(el, attr);
             let c = target - b;
             let d = Math.ceil(duration / (1000 / 60));
             // console.log(t, b, c, d);
             let timer = 0;
             anim();
+    
             function anim() {
                 t++;
                 if (t > d) {
@@ -239,18 +246,27 @@
                     cancelAnimationFrame(timer);
                 } else {
                     let val = Tween[fx](t, b, c, d);
-                    el.style[attr] = val + "px";
+                    css(el, attr, val);
                     timer = requestAnimationFrame(anim);
                 }
             }
         }
-    ```  
-* 然后测试一把，果然盒子可以往下做动画了，我们还可以更改目标值，时长，以及选择不同的运动公式
-    看下结果，美滋滋
     
+        (function () {
+            let aBtn = document.querySelectorAll("button");
+            let oBox = document.querySelector("#box");
+            aBtn[0].onclick = function () {
+                myTween(oBox, "top", 200, 500, "linear");
+                myTween(oBox, "opacity", .1, 3000, "elasticBoth")
+            }
+        })()
+    </script>
+    </body>
+    </html>
+    ``` 
+
+* 然后测试下来没任何问题，简单的css方法就封装好了    
+
 > 目录
 * [返回目录](../README.md)
-* [上一章-Tween的运动算法(下)](../6-Tween的运动算法(下)/6-Tween的运动算法(下).md)       
-* [下一章-添加css方法](../8-添加css方法/8-添加css方法.md)       
-                                           
-        
+* [上一章-封装运动框架-基础版.md](../7-封装运动框架-基础版/7-封装运动框架-基础版.md)     
