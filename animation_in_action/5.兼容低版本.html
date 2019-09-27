@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box{
+            position: absolute;
+            left: 0;
+            top: 100px;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+<button>run</button>
+<button>stop</button>
+<div id="box"></div>
+<script>
+    (function(){
+        if(!window.requestAnimationFrame){
+            //说明这个是低版本
+            window.requestAnimationFrame = function(callback){
+                return setTimeout(callback, 1000 / 60)
+            };
+            window.cancelAnimationFrame = function(index){
+                clearTimeout(index);
+            };
+        }
+        let aBtn = document.querySelectorAll("button");
+        let oBox = document.querySelector("#box");
+        let timer = 0;
+        aBtn[0].onclick = function(){
+            move();
+        };
+        aBtn[1].onclick = function(){
+            cancelAnimationFrame(timer);
+        };
+
+        function move(){
+            cancelAnimationFrame(timer);
+            timer = requestAnimationFrame(function(){
+                let l = parseFloat(getComputedStyle(oBox)["left"]);
+                if(l >= 200){
+                    console.log("动画停止")
+                }else{
+                    oBox.style.left = l + 5 + "px";
+                    move();
+                }
+            });
+            console.log(timer);
+        }
+    })();
+</script>
+</body>
+</html>

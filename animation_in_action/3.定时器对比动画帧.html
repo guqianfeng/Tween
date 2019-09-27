@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box{
+            position: relative;
+
+        }
+        #box div{
+            position: absolute;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+<button>run</button>
+<button>stop</button>
+<div id="box"></div>
+<script>
+    (function(){
+        let box = document.querySelector("#box");
+        let inner = "";
+        for (let i = 0; i < 300; i++) {
+            inner += `<div style="top: ${i * 100}px"></div>`;
+        }
+        box.innerHTML = inner;
+
+        let aBtn = document.querySelectorAll("button");
+        let aDiv = box.querySelectorAll("div");
+
+        // aBtn[0].onclick = function(){
+        //     aDiv.forEach(item => {
+        //         setInterval(function(){
+        //             let l = parseFloat(getComputedStyle(item)["left"]);
+        //             item.style.left = l + 5 + "px";
+        //         }, 1000/60)
+        //     })
+        // };
+
+        aBtn[0].onclick = function(){
+            aDiv.forEach(item => {
+                move(item);
+            })
+        };
+
+        function move(div){
+            requestAnimationFrame(function(){
+                let l = parseFloat(getComputedStyle(div)["left"]);
+                div.style.left = l + 5 + "px";
+                move(div);
+            })
+        }
+    })();
+</script>
+</body>
+</html>
