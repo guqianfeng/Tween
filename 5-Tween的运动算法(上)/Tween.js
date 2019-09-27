@@ -44,7 +44,7 @@ const Tween = {
         }
         return -(a*Math.pow(2,10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )) + b;
     },
-    elasticOut: function(t, b, c, d, a, p){    //*正弦增强曲线（弹动渐出）
+    elasticOut: function(t, b, c, d, a, p){    //正弦增强曲线（弹动渐出）
         if (t === 0) {
             return b;
         }
@@ -94,7 +94,7 @@ const Tween = {
     },
     backOut: function(t, b, c, d, s){
         if (typeof s == 'undefined') {
-            s = 1.70158;  //回缩的距离
+            s = 1.70158;
         }
         return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
     },
