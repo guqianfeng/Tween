@@ -176,7 +176,7 @@
 
     function myTween(el, attr, target, duration, fx) {
         let t = 0;
-        let b = css(el, attr);
+        let b = css(el, attr); //通过css方法获取样式
         let c = target - b;
         let d = Math.ceil(duration / (1000 / 60));
         // console.log(t, b, c, d);
@@ -190,7 +190,7 @@
                 cancelAnimationFrame(timer);
             } else {
                 let val = Tween[fx](t, b, c, d);
-                css(el, attr, val);
+                css(el, attr, val); //通过css方法设置样式
                 timer = requestAnimationFrame(anim);
             }
         }
