@@ -97,8 +97,7 @@
             if (!a || a < Math.abs(c)) {
                 a = c;
                 var s = p / 4;
-            }
-            else {
+            } else {
                 var s = p / (2 * Math.PI) * Math.asin(c / a);
             }
             if (t < 1) {
@@ -174,10 +173,19 @@
         }
     }
 
-    function myTween(el, attr, target, duration, fx) {
+    function myTween(el, attr, duration, fx) {
         let t = 0;
-        let b = css(el, attr); //通过css方法获取样式
-        let c = target - b;
+        // let b = css(el, attr); //通过css方法获取样式
+        // let c = target - b;
+        let b = {};
+        let c = {};
+        for (let key in attr) {
+            b[key] = css(el, key);
+            c[key] = attr[key] - b[key];
+        }
+        // console.log(b);
+        // console.log(attr);
+        // console.log(c);
         let d = Math.ceil(duration / (1000 / 60));
         // console.log(t, b, c, d);
         let timer = 0;
@@ -189,8 +197,10 @@
                 //动画结束
                 cancelAnimationFrame(timer);
             } else {
-                let val = Tween[fx](t, b, c, d);
-                css(el, attr, val); //通过css方法设置样式
+                for (let key in attr) {
+                    let val = Tween[fx](t, b[key], c[key], d);
+                    css(el, key, val); //通过css方法设置样式
+                }
                 timer = requestAnimationFrame(anim);
             }
         }
@@ -200,8 +210,12 @@
         let aBtn = document.querySelectorAll("button");
         let oBox = document.querySelector("#box");
         aBtn[0].onclick = function () {
-            myTween(oBox, "top", 200, 500, "linear");
-            myTween(oBox, "opacity", .1, 500, "linear")
+            // myTween(oBox, "top", 200, 500, "linear");
+            // myTween(oBox, "opacity", .1, 500, "linear")
+            myTween(oBox, {
+                top: 200,
+                opacity: .1
+            }, 500, "linear")
         }
     })()
 </script>
