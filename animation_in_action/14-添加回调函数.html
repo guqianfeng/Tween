@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box, #box2{
+            position: absolute;
+            left: 0;
+            top: 100px;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            opacity: 1;
+        }
+        #box2{
+            top: 300px;
+        }
+    </style>
+</head>
+<body>
+<button>run</button>
+<button>stop</button>
+<div id="box"></div>
+<!--<div id="box2"></div>-->
+<script src="./Tween.js"></script>
+<script>
+    (function () {
+        if (!window.requestAnimationFrame) {
+            //说明这个是低版本
+            window.requestAnimationFrame = function (callback) {
+                return setTimeout(callback, 1000 / 60)
+            };
+            window.cancelAnimationFrame = function (index) {
+                clearTimeout(index);
+            };
+        }
+    })();
+
+    function css(el, attr, val) {
+        if (val === undefined) {
+            return parseFloat(getComputedStyle(el)[attr]);
+        } else {
+            if (attr === "opacity") {
+                el.style[attr] = val;
+                el.style.filter = `alpha(opacity=${val * 100})`;//兼容
+            } else {
+                el.style[attr] = val + "px";
+            }
+        }
+    }
+
+    function myTween(option) {
+        //el, attr, duration, fx
+        let {el, attr, duration = 500, fx = "linear", cb} = option;
+        if(el.animationTimer){
+            return;
+        }
+        let t = 0;
+        // let b = css(el, attr); //通过css方法获取样式
+        // let c = target - b;
+        let b = {};
+        let c = {};
+        for (let key in attr) {
+            b[key] = css(el, key);
+            c[key] = attr[key] - b[key];
+        }
+        // console.log(b);
+        // console.log(attr);
+        // console.log(c);
+        let d = Math.ceil(duration / (1000 / 60));
+        // console.log(t, b, c, d);
+        anim();
+
+        function anim() {
+            t++;
+            if (t > d) {
+                //动画结束
+                cancelAnimationFrame(el.animationTimer);
+                el.animationTimer = null;
+                cb && cb();
+            } else {
+                for (let key in attr) {
+                    let val = Tween[fx](t, b[key], c[key], d);
+                    css(el, key, val); //通过css方法设置样式
+                }
+                el.animationTimer = requestAnimationFrame(anim);
+            }
+        }
+    }
+
+    myTween.stop = function(el){
+        cancelAnimationFrame(el.animationTimer);
+        el.animationTimer = null;
+    };
+
+    (function () {
+        let aBtn = document.querySelectorAll("button");
+        let oBox = document.querySelector("#box");
+        let oBox2 = document.querySelector("#box2");
+        aBtn[0].onclick = function () {
+            myTween({
+                el: oBox,
+                attr: {
+                    left: 500,
+                    opacity: .1
+                },
+                cb(){
+                    myTween({
+                        el: oBox,
+                        attr: {
+                            top: 500,
+                            opacity: 1
+                        },
+                        duration: 500,
+                        fx: "linear",
+                        cb(){
+                            myTween({
+                                el: oBox,
+                                attr: {
+                                    left: 0,
+                                    opacity: .1
+                                },
+                                duration: 500,
+                                fx: "linear",
+                                cb(){
+                                    myTween({
+                                        el: oBox,
+                                        attr: {
+                                            top: 100,
+                                            opacity: 1
+                                        },
+                                        duration: 500,
+                                        fx: "linear",
+                                        cb(){
+                                            console.log("任务完成");
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }
+            });
+        };
+
+        aBtn[1].onclick = function () {
+            // cancelAnimationFrame(oBox.animationTimer);
+            // cancelAnimationFrame(oBox2.animationTimer);
+            myTween.stop(oBox);
+            // myTween.stop(oBox2);
+        }
+    })()
+</script>
+</body>
+</html>

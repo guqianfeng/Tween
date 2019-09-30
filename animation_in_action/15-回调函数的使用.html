@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box{
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<div id="box"></div>
+<script src="./myTween.js"></script>
+<script>
+    (function () {
+        let oBox = document.querySelector("#box");
+        function move1(){
+            myTween({
+                el: oBox,
+                attr: {
+                    top: 0,
+                    left: 400
+                },
+                cb: move2
+            })
+        }
+        function move2(){
+            myTween({
+                el: oBox,
+                attr: {
+                    top: 400,
+                    left: 400
+                },
+                cb: move3
+            })
+        }
+        function move3(){
+            myTween({
+                el: oBox,
+                attr: {
+                    top: 400,
+                    left: 0
+                },
+                cb: move4
+            })
+        }
+        function move4(){
+            myTween({
+                el: oBox,
+                attr: {
+                    top: 0,
+                    left: 0
+                },
+                cb: move1
+            })
+        }
+        move1();
+    })()
+</script>
+</body>
+</html>
