@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        ul, li {
+            list-style: none;
+        }
+
+        #list > li {
+            margin-top: 20px;
+            width: 200px;
+            font: 14px / 40px "宋体";
+            text-indent: 2em;
+            color: #fff;
+            background-color: red;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<ul id="list">
+    <li>选项一</li>
+    <li>选项二</li>
+    <li>选项三</li>
+</ul>
+<script src="./myTween.js"></script>
+<script>
+    {
+        let list = document.querySelectorAll("#list li");
+        list.forEach(item => {
+            item.onmouseover = function(){
+                myTween.stop(this);
+                myTween({
+                    el: this,
+                    attr: {
+                        width: 400,
+                    },
+                    duration: 600,
+                    fx: "bounceOut",
+                })
+            };
+            item.onmouseout = function(){
+                myTween.stop(this);
+                myTween({
+                    el: this,
+                    attr: {
+                        width: 200,
+                    },
+                    duration: 2000,
+                    fx: "easeOutStrong",
+                });
+            }
+        })
+    }
+</script>
+</body>
+</html>
