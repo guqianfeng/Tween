@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box{
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            transform: rotate(40deg);
+        }
+    </style>
+</head>
+<body>
+    <div id="box"></div>
+    <script src="./myTween.js"></script>
+    <script>
+        const transformArr = [
+            "rotate",
+            "rotateX",
+            "rotateY",
+            "rotateZ",
+            "translate",
+            "translateX",
+            "translateY",
+            "translateZ",
+            "scale",
+            "scaleX",
+            "scaleY",
+            "scaleZ",
+            "skew",
+            "skewX",
+            "skewY",
+            "skewZ",
+        ];
+        function css(el, attr, val) {
+            if (transformArr.includes(attr)) {
+                return transform(el, attr, val)
+            }
+            if (val === undefined) {
+                return parseFloat(getComputedStyle(el)[attr]);
+            } else {
+                if (attr === "opacity") {
+                    el.style[attr] = val;
+                    el.style.filter = `alpha(opacity=${val * 100})`;//兼容
+                } else {
+                    el.style[attr] = val + "px";
+                }
+            }
+        }
+        function transform(el, attr, val) {
+            console.log("在这里进行设置transform或者获取transform");
+        }
+        {
+            let oBox = document.getElementById("box");
+            console.log(css(oBox, "rotate"));
+        }
+    </script>
+</body>
+</html>
