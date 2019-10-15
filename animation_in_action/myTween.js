@@ -128,7 +128,7 @@ const Tween = {
     }
 };
 
-(function () {
+{
     if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = function (callback) {
             return setTimeout(callback, 1000 / 60)
@@ -137,9 +137,31 @@ const Tween = {
             clearTimeout(index);
         };
     }
-})();
+}
+
+const transformArr = [
+    "rotate",
+    "rotateX",
+    "rotateY",
+    "rotateZ",
+    "translate",
+    "translateX",
+    "translateY",
+    "translateZ",
+    "scale",
+    "scaleX",
+    "scaleY",
+    "scaleZ",
+    "skew",
+    "skewX",
+    "skewY",
+    "skewZ",
+];
 
 function css(el, attr, val) {
+    if (transformArr.includes(attr)) {
+        return transform(el, attr, val)
+    }
     if (val === undefined) {
         return parseFloat(getComputedStyle(el)[attr]);
     } else {
@@ -150,6 +172,42 @@ function css(el, attr, val) {
             el.style[attr] = val + "px";
         }
     }
+}
+
+function transform(el, attr, val) {
+    el.transform = el.transform || {}; //初始值，之前设置过transform就依然使用自己的，否则undefined的话设置为空对象
+    if (val === undefined) {
+        return el.transform[attr];
+    }
+    el.transform[attr] = val;
+    let transformResult = "";
+    for (let key in el.transform) {
+        switch (key) {
+            case "rotate":
+            case "rotateX":
+            case "rotateY":
+            case "rotateZ":
+            case "skew":
+            case "skewX":
+            case "skewY":
+            case "skewZ":
+                transformResult += `${key}(${el.transform[key]}deg) `;
+                break;
+            case "translate":
+            case "translateX":
+            case "translateY":
+            case "translateZ":
+                transformResult += `${key}(${el.transform[key]}px) `;
+                break;
+            case "scale":
+            case "scaleX":
+            case "scaleY":
+            case "scaleZ":
+                transformResult += `${key}(${el.transform[key]}) `;
+                break;
+        }
+    }
+    el.style.transform = transformResult.trim();
 }
 
 function myTween(option) {

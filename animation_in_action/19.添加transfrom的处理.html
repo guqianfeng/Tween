@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box{
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="box"></div>
+    <script src="./myTween.js"></script>
+    <script>
+        {
+            let oBox = document.getElementById("box");
+            css(oBox, "rotate", 0);
+            css(oBox, "translateY", 0);
+            myTween({
+                el: oBox,
+                attr: {
+                    rotate: 360
+                },
+                cb(){
+                    myTween({
+                        el: oBox,
+                        attr: {
+                            translateY: 500
+                        }
+                    })
+                }
+            })
+        }
+    </script>
+</body>
+</html>
