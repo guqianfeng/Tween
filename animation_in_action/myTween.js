@@ -154,15 +154,24 @@ function css(el, attr, val) {
 
 function myTween(option) {
     let {el, attr, duration = 500, fx = "linear", cb} = option;
-    if(el.animationTimer){
+    if (el.animationTimer) {
         return;
     }
+    let maxC = 0; //duration优化用
     let t = 0;
     let b = {};
     let c = {};
     for (let key in attr) {
         b[key] = css(el, key);
         c[key] = attr[key] - b[key];
+        maxC = Math.max(maxC, Math.abs(c[key])); //循环结束后拿到最大的变化量
+    }
+    if (typeof duration === "object") {
+        let durationOption = duration;
+        durationOption.multiple = durationOption.multiple || 2;
+        duration = maxC * duration.multiple;
+        duration = durationOption.max ? Math.min(duration, durationOption.max) : duration;
+        duration = durationOption.min ? Math.max(duration, durationOption.min) : duration;
     }
     let d = Math.ceil(duration / (1000 / 60));
     anim();
@@ -183,7 +192,7 @@ function myTween(option) {
     }
 }
 
-myTween.stop = function(el){
+myTween.stop = function (el) {
     cancelAnimationFrame(el.animationTimer);
     el.animationTimer = null;
 };
