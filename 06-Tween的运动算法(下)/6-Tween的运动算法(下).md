@@ -1,11 +1,7 @@
-# 多样式动画
-
-> 优化
-1. 我们希望样式同时进行动画
-2. 这个时候就需要通过传入对象，在封装下框架
+# Tween的运动算法(下)
 
 > 练习
-* 先来看下上次的代码，稍作改动下
+* 接下来我们用requestAnimationFrame来实现下我们的效果
     ```
     <!DOCTYPE html>
     <html lang="en">
@@ -13,14 +9,13 @@
         <meta charset="UTF-8">
         <title>Title</title>
         <style>
-            #box {
+            #box{
                 position: absolute;
                 left: 0;
                 top: 100px;
                 width: 100px;
                 height: 100px;
                 background-color: red;
-                opacity: 1;
             }
         </style>
     </head>
@@ -158,137 +153,60 @@
                 return Tween['bounceOut'](t * 2 - d, 0, c, d) * 0.5 + c * 0.5 + b;
             }
         };
-        (function () {
-            if (!window.requestAnimationFrame) {
+        (function(){
+            if(!window.requestAnimationFrame){
                 //说明这个是低版本
-                window.requestAnimationFrame = function (callback) {
+                window.requestAnimationFrame = function(callback){
                     return setTimeout(callback, 1000 / 60)
                 };
-                window.cancelAnimationFrame = function (index) {
+                window.cancelAnimationFrame = function(index){
                     clearTimeout(index);
                 };
             }
-        })();
-    
-        function css(el, attr, val) {
-            if (val === undefined) {
-                return parseFloat(getComputedStyle(el)[attr]);
-            } else {
-                if (attr === "opacity") {
-                    el.style[attr] = val;
-                    el.style.filter = `alpha(opacity=${val * 100})`;//兼容
-                } else {
-                    el.style[attr] = val + "px";
-                }
-            }
-        }
-    
-        function myTween(el, attr, target, duration, fx) {
-            let t = 0;
-            let b = css(el, attr); //通过css方法获取样式
-            let c = target - b;
-            let d = Math.ceil(duration / (1000 / 60));
-            // console.log(t, b, c, d);
-            let timer = 0;
-            anim();
-    
-            function anim() {
-                t++;
-                if (t > d) {
-                    //动画结束
-                    cancelAnimationFrame(timer);
-                } else {
-                    let val = Tween[fx](t, b, c, d);
-                    css(el, attr, val); //通过css方法设置样式
-                    timer = requestAnimationFrame(anim);
-                }
-            }
-        }
-    
-        (function () {
             let aBtn = document.querySelectorAll("button");
             let oBox = document.querySelector("#box");
-            aBtn[0].onclick = function () {
-                myTween(oBox, "top", 200, 500, "linear");
-                myTween(oBox, "opacity", .1, 500, "linear")
+            let timer = 0;
+            let t = 0;
+            let b = parseFloat(getComputedStyle(oBox)["left"]);
+            let target = 400;
+            let c = target - b;
+            let d = 100;
+            // console.log(t, b, c, d);
+            function move(){
+                t++;
+                // console.log(t, Tween.linear(t,b,c,d));
+                if(t <= d){
+                    let l = Tween["bounceBoth"](t,b,c,d);
+                    oBox.style.left = l + "px";
+                    timer = requestAnimationFrame(move);
+                }else{
+                    cancelAnimationFrame(timer);
+                }
             }
-        })()
+            aBtn[0].onclick = function(){
+                move();
+            };
+            aBtn[1].onclick = function(){
+                cancelAnimationFrame(timer);
+            };
+        })();
     </script>
     </body>
     </html>
     ```
   
-* 注意核心的代码其实是这里
-    ```
-        aBtn[0].onclick = function () {
-            myTween(oBox, "top", 200, 500, "linear");
-            myTween(oBox, "opacity", .1, 500, "linear")
-        }
-    ```  
-  
-* 我们打开浏览器后运行虽然动画上貌似没什么问题，但实际上这样的写法非常不和谐，操作多个样式就要调用多次方法
-* 所以接下来我们要再次封装 
-* 这里我们希望就传入个对象，把原先传入的attr和target并成一个参数，具体传入的格式就是这样的
-    ```
-    {
-        left: 500,
-        opacity: .1
-    }
-    ``` 
-* 所以我们的target就不用再传入了，然后b，c应该也是对象，记录多样式的初始值与变化值
-* 具体代码如下
-    ```
-    function myTween(el, attr, duration, fx) {
-        let t = 0;
-        // let b = css(el, attr); //通过css方法获取样式
-        // let c = target - b;
-        let b = {};
-        let c = {};
-        for (let key in attr) {
-            b[key] = css(el, key);
-            c[key] = attr[key] - b[key];
-        }
-        // console.log(b);
-        // console.log(attr);
-        // console.log(c);
-        let d = Math.ceil(duration / (1000 / 60));
-        // console.log(t, b, c, d);
-        let timer = 0;
-        anim();
+* 然后运行后就点击run就能看到动画啦~    
+* 其实很简单需要注意的是
+    1. 需要递归
+    2. 控制达到目标的条件，这里的t<=d就是没达到目标点就继续动画帧requestAnimationFrame
+    3. 达到目标后取消动画帧cancelAnimationFrame
+    4. 原理其实就是绘制每一帧的位置，这个位置就是Tween计算所得
 
-        function anim() {
-            t++;
-            if (t > d) {
-                //动画结束
-                cancelAnimationFrame(timer);
-            } else {
-                for (let key in attr) {
-                    let val = Tween[fx](t, b[key], c[key], d);
-                    css(el, key, val); //通过css方法设置样式
-                }
-                timer = requestAnimationFrame(anim);
-            }
-        }
-    }
-    ```
-* 所以在之后调用代码的时候就可以这样调用
-    ```
-    (function () {
-        let aBtn = document.querySelectorAll("button");
-        let oBox = document.querySelector("#box");
-        aBtn[0].onclick = function () {
-            // myTween(oBox, "top", 200, 500, "linear");
-            // myTween(oBox, "opacity", .1, 500, "linear")
-            myTween(oBox, {
-                top: 200,
-                opacity: .1
-            }, 500, "linear")
-        }
-    })()
-    ```  
-* 效果和我们之前一模一样，但这个封装就非常的舒服了
+* 各个运动的方式，小伙伴自行玩耍
+* 在使用中，如果每次都要这么写其实还是很麻烦的，
+    所以在[下一章](../7-封装运动框架-基础版/7-封装运动框架-基础版.md) 我们要封装个基础版的动画框架
 
 > 目录
 * [返回目录](../README.md)
-* [上一章-添加css方法](../8-添加css方法/8-添加css方法.md) 
-* [下一章-动画管理](../10-动画管理/10-动画管理.md) 
+* [上一章-Tween的运动算法(上)](../05-Tween的运动算法(上)/5-Tween的运动算法(上).md)       
+* [下一章-封装运动框架-基础版](../07-封装运动框架-基础版/7-封装运动框架-基础版.md)       
