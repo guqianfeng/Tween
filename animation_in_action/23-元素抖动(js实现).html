@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box {
+            position: absolute;
+            left: 100px;
+            top: 100px;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="box"></div>
+<script src="myTween.js"></script>
+<script>
+    {
+        let oBox = document.getElementById("box");
+        //左右抖动，先拿到初始值left
+        let startL = css(oBox, "left");
+        // let arr = [5, -4, 3, -2, 1, 0]; //设置抖动的距离
+        let shakeCount = 20;
+        let arr = [];
+        for (let i = shakeCount; i >= 0; i--) {
+            arr.push(i % 2 ? i : -i);
+        }
+        let timer = setInterval(() => {
+            if (arr.length <= 0) {
+                clearInterval(timer);
+                return;
+            } else {
+                // console.log(arr.shift());
+                css(oBox, "left", startL + arr.shift());
+            }
+        }, 30)
+    }
+</script>
+</body>
+</html>
