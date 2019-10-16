@@ -158,12 +158,29 @@ const transformArr = [
     "skewZ",
 ];
 
+const normalArr = [
+    "width",
+    "height",
+    "marginTop",
+    "marginLeft",
+    "marginRight",
+    "marginBottom",
+    "paddingTop",
+    "paddingLeft",
+    "paddingRight",
+    "paddingBottom",
+    "left",
+    "right",
+    "top",
+    "bottom",
+]; //希望能转成数字的
 function css(el, attr, val) {
     if (transformArr.includes(attr)) {
         return transform(el, attr, val)
     }
     if (val === undefined) {
-        return parseFloat(getComputedStyle(el)[attr]);
+        let v = getComputedStyle(el)[attr];
+        return (normalArr.includes(v) || !isNaN(parseFloat(v))) ? parseFloat(v) : v;
     } else {
         if (attr === "opacity") {
             el.style[attr] = val;
