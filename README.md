@@ -35,4 +35,5 @@
     * [15-transform在获取时的问题](./15-transform在获取时的问题/15-transform在获取时的问题.md)
     * [16-在css方法中融入transform](./16-在css方法中融入transform/16-在css方法中融入transform.md)
     * [17-优化css函数-特殊样式获取](./17-优化css函数-特殊样式获取/17-优化css函数-特殊样式获取.md)
+    * [18-样式的批量设置](./18-样式的批量设置/18-样式的批量设置.md)
     

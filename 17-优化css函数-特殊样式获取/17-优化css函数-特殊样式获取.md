@@ -90,3 +90,4 @@
 > 目录
 * [返回目录](../README.md)
 * [上一章-在css方法中融入transform](../16-在css方法中融入transform/16-在css方法中融入transform.md)     
+* [下一章-样式的批量设置](../18-样式的批量设置/18-样式的批量设置.md)     

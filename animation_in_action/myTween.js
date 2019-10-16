@@ -175,6 +175,13 @@ const normalArr = [
     "bottom",
 ]; //希望能转成数字的
 function css(el, attr, val) {
+    if (typeof attr === "object") {
+        //批量设置
+        for(let key in attr){
+            css(el, key, attr[key]);
+        }
+        return;
+    }
     if (transformArr.includes(attr)) {
         return transform(el, attr, val)
     }
@@ -185,8 +192,12 @@ function css(el, attr, val) {
         if (attr === "opacity") {
             el.style[attr] = val;
             el.style.filter = `alpha(opacity=${val * 100})`;//兼容
-        } else {
+        } else if (normalArr.includes(attr)) {
             el.style[attr] = val + "px";
+        } else if (attr === "zIndex") {
+            el.style[attr] = Math.round(val);
+        } else {
+            el.style[attr] = val;
         }
     }
 }

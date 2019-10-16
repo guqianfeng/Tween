@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box{
+            position: absolute;
+            left: 100px;
+            top: 100px;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            opacity: .5;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+<div id="box"></div>
+<script src="./myTween.js"></script>
+<script>
+    {
+        let oBox = document.querySelector("#box");
+        console.log(css(oBox, "zIndex"));
+        css(oBox, "zIndex", 2.8);
+        console.log(css(oBox, "zIndex"));
+        css(oBox, "zIndex", 4.1);
+        console.log(css(oBox, "zIndex"));
+        css(oBox, "background", "skyblue");
+
+        css(oBox, {
+            width: 500,
+            height: 600,
+            background: "black",
+            rotate: 60
+        })
+    }
+</script>
+</body>
+</html>
