@@ -75,8 +75,7 @@ const Tween = {
         if (!a || a < Math.abs(c)) {
             a = c;
             var s = p / 4;
-        }
-        else {
+        } else {
             var s = p / (2 * Math.PI) * Math.asin(c / a);
         }
         if (t < 1) {

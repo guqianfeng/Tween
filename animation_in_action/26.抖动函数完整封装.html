@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #box {
+            position: absolute;
+            left: 100px;
+            top: 100px;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="box"></div>
+<script src="myTween.js"></script>
+<script>
+    {
+        let oBox = document.getElementById("box");
+        oBox.addEventListener("mouseover", () => {
+            shake.stop(oBox);
+            shake({
+                el: oBox,
+                attr: "left",
+                cb(){
+                    myTween({
+                        el: oBox,
+                        attr: {
+                            top: 600
+                        },
+                        duration: 2000,
+                        fx: "bounceOut",
+                    })
+                }
+            })
+        })
+    }
+</script>
+</body>
+</html>

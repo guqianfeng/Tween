@@ -75,8 +75,7 @@ const Tween = {
         if (!a || a < Math.abs(c)) {
             a = c;
             var s = p / 4;
-        }
-        else {
+        } else {
             var s = p / (2 * Math.PI) * Math.asin(c / a);
         }
         if (t < 1) {
@@ -110,7 +109,7 @@ const Tween = {
     bounceIn: function (t, b, c, d) {    //弹球减振（弹球渐出）
         return c - Tween['bounceOut'](d - t, 0, c, d) + b;
     },
-    bounceOut: function (t, b, c, d) {//*
+    bounceOut: function (t, b, c, d) {
         if ((t /= d) < (1 / 2.75)) {
             return c * (7.5625 * t * t) + b;
         } else if (t < (2 / 2.75)) {
@@ -177,7 +176,7 @@ const normalArr = [
 function css(el, attr, val) {
     if (typeof attr === "object") {
         //批量设置
-        for(let key in attr){
+        for (let key in attr) {
             css(el, key, attr[key]);
         }
         return;
@@ -281,4 +280,48 @@ function myTween(option) {
 myTween.stop = function (el) {
     cancelAnimationFrame(el.animationTimer);
     el.animationTimer = null;
+};
+
+function shake({el, attr, count = 15, cb}) {
+    if (el.timer) {
+        return;
+    }
+    let shakeArr = [];
+    for (let i = count; i >= 0; i--) {
+        shakeArr.push(i % 2 ? i : -i);
+    }
+    el.start = {};
+    if (Array.isArray(attr)) {
+        attr.forEach(item => {
+            el.start[item] = css(el, item);
+        })
+    } else {
+        el.start[attr] = css(el, attr);
+    }
+    move();
+
+    function move() {
+        el.timer = requestAnimationFrame(() => {
+            if (shakeArr.length < 1) {
+                console.log("抖动结束");
+                cancelAnimationFrame(el.timer);
+                el.timer = false;
+                cb && cb();
+            } else {
+                let num = shakeArr.shift();
+                for (let key in el.start) {
+                    css(el, key, el.start[key] + num);
+                }
+                move();
+            }
+        })
+    }
+}
+
+shake.stop = function (el) {
+    cancelAnimationFrame(el.timer);
+    el.timer = false;
+    for (let key in el.start) {
+        css(el, key, el.start[key]);
+    }
 };
