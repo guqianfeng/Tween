@@ -303,7 +303,6 @@ function shake({el, attr, count = 15, cb}) {
     function move() {
         el.timer = requestAnimationFrame(() => {
             if (shakeArr.length < 1) {
-                console.log("抖动结束");
                 cancelAnimationFrame(el.timer);
                 el.timer = false;
                 cb && cb();
