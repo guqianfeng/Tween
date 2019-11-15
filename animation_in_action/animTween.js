@@ -238,7 +238,7 @@ function transform(el, attr, val) {
 }
 
 function myTween(option) {
-    let {el, attr, duration = 500, fx = "linear", cb} = option;
+    let {el, attr, duration = 500, fx = "linear"} = option;
     if (el.animationTimer) {
         return;
     }
