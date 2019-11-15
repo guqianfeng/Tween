@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="box"></div>
+<script src="./animTween.js"></script>
+<script>
+    {
+        let oBox = document.querySelector(".box");
+        oBox.onclick = function () {
+            myTween({
+                el: oBox,
+                attr: {
+                    width: 300,
+                },
+                fx: "bounceOut",
+            }).then(() => {
+                return myTween({
+                    el: oBox,
+                    attr: {
+                        height: 300,
+                    },
+                    fx: "bounceOut",
+                })
+            }).then(() => {
+                return myTween({
+                    el: oBox,
+                    attr: {
+                        opacity: .5,
+                    },
+                })
+            })
+        }
+    }
+</script>
+</body>
+</html>
